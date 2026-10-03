@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#070b12">
+<title>Hadeel — A Little Surprise</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Kufi+Arabic:wght@300;400;500;600&display=swap');
+
+:root{
+  --bg:#070b12;
+  --bg2:#0d1420;
+  --gold:#c9ad72;
+  --gold2:#e3cc95;
+  --cream:#f3eee3;
+  --muted:#aaa79f;
+  --line:rgba(201,173,114,.24);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--cream)}
+body{
+  overflow:hidden;
+  font-family:"Noto Kufi Arabic",system-ui,sans-serif;
+}
+body:before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 50% 20%,rgba(201,173,114,.10),transparent 34%),
+    radial-gradient(circle at 15% 80%,rgba(55,85,125,.08),transparent 30%),
+    linear-gradient(180deg,#070b12,#090f18 55%,#060a10);
+}
+.screen{
+  position:absolute;inset:0;
+  min-height:100svh;
+  display:none;align-items:center;justify-content:center;
+  padding:30px 20px;
+  overflow:auto;
+  z-index:1;
+}
+.screen.active{display:flex;animation:screenIn .75s ease both}
+.content{width:min(700px,100%);text-align:center;position:relative;z-index:2}
+.eyebrow{
+  font:500 13px "Cormorant Garamond",serif;
+  letter-spacing:4px;color:var(--gold);
+  direction:ltr;text-transform:uppercase;
+}
+h1,h2{
+  font-family:"Cormorant Garamond",Georgia,serif;
+  font-weight:500;direction:ltr;
+}
+h1{font-size:clamp(58px,16vw,100px);margin:18px 0 8px;line-height:.95}
+h2{font-size:clamp(34px,9vw,58px);margin:16px 0;line-height:1.1}
+p{font-size:15px;line-height:2.15;color:var(--muted);margin:12px auto}
+.arabic{font-size:16px;line-height:2.25}
+button{
+  border:1px solid rgba(201,173,114,.52);
+  background:rgba(201,173,114,.065);
+  color:var(--cream);
+  padding:13px 24px;
+  border-radius:999px;
+  font-family:inherit;font-size:14px;
+  cursor:pointer;
+  transition:transform .25s ease,background .25s ease,border-color .25s ease,box-shadow .25s ease;
+  margin-top:22px;
+}
+button:hover{transform:translateY(-2px);background:rgba(201,173,114,.13);border-color:var(--gold);box-shadow:0 10px 35px rgba(0,0,0,.22)}
+button:active{transform:translateY(0)}
+button:focus-visible,.choice:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.stars{position:absolute;inset:0;pointer-events:none}
+.star{position:absolute;width:2px;height:2px;background:#e5dfd2;border-radius:50%;opacity:.4;animation:twinkle 3s infinite alternate}
+.reveal{opacity:0;transform:translateY(16px);animation:rise .9s ease forwards}
+.delay1{animation-delay:.25s}.delay2{animation-delay:.55s}.delay3{animation-delay:.9s}
+
+.topbar{
+  position:fixed;top:14px;left:50%;transform:translateX(-50%);
+  z-index:20;display:flex;gap:6px;align-items:center;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  border:1px solid rgba(201,173,114,.5);
+  background:transparent;transition:.3s;
+}
+.dot.active{width:20px;border-radius:10px;background:var(--gold);border-color:var(--gold)}
+
+.music{
+  position:fixed;left:15px;top:14px;z-index:20;
+  width:40px;height:40px;padding:0;margin:0;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+}
+.music.off{opacity:.55}
+
+.question{
+  font-size:24px!important;color:var(--cream)!important;
+  margin:12px auto 22px!important;
+}
+.choice-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  max-width:590px;margin:0 auto;
+}
+.choice{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.025);
+  border-radius:18px;padding:19px 12px;
+  cursor:pointer;transition:.28s;
+  color:var(--cream);
+}
+.choice:hover{border-color:rgba(201,173,114,.62);background:rgba(201,173,114,.065);transform:translateY(-3px)}
+.choice.selected{border-color:var(--gold);background:rgba(201,173,114,.11);box-shadow:0 0 0 1px rgba(201,173,114,.12) inset}
+.choice strong{display:block;margin-bottom:7px;font-size:14px}
+.choice span{font-size:11px;color:#9e9b96}
+#response{min-height:28px;margin-top:16px;color:var(--gold2);font-size:13px}
+.next-hidden{opacity:0;pointer-events:none;transform:translateY(5px)}
+.next-show{opacity:1;pointer-events:auto;transform:none}
+
+.message{
+  border:1px solid rgba(201,173,114,.16);
+  background:rgba(255,255,255,.025);
+  border-radius:26px;padding:27px 23px;
+  text-align:right;
+  box-shadow:0 20px 70px rgba(0,0,0,.25);
+  max-height:72svh;overflow:auto;
+}
+.message p{max-width:none}
+.message strong{color:var(--cream)}
+.small{font-size:12px;color:#85827b}
+.count{
+  font:500 82px "Cormorant Garamond",serif;
+  color:var(--gold);direction:ltr;
+  margin:8px 0;
+  animation:pulse 1s ease infinite;
+}
+.count-label{font-size:12px;color:#85827b}
+.final-line{color:var(--gold2)!important;font-size:18px!important}
+.divider{width:55px;height:1px;background:var(--line);margin:22px auto}
+
+#s6 .content{max-width:650px}
+#s6 h2{margin-bottom:24px}
+
+@keyframes screenIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:none}}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes twinkle{to{opacity:.10;transform:scale(.6)}}
+@keyframes pulse{50%{transform:scale(1.05);opacity:.72}}
+
+@media(max-width:560px){
+  .screen{padding:42px 18px 28px}
+  .choice-grid{grid-template-columns:1fr}
+  .choice{padding:16px 12px}
+  .message{padding:22px 17px;max-height:68svh}
+  .arabic{font-size:15px}
+  .question{font-size:21px!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar" aria-hidden="true">
+  <i class="dot active"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+</div>
+
+<button class="music off" id="musicBtn" aria-label="صوت هادئ" title="صوت هادئ">♪</button>
+
+<section class="screen active" id="s1">
+  <div class="stars" id="stars"></div>
+  <div class="content">
+    <div class="eyebrow reveal">A LITTLE SURPRISE</div>
+    <h1 class="reveal delay1">هديل...</h1>
+    <p class="arabic reveal delay2">اليوم عندي لك شيء صغير.<br>لكن قبل أن أبدأ...</p>
+    <button class="reveal delay3" onclick="go(2)">ابدئي المفاجأة ✦</button>
+  </div>
+</section>
+
+<section class="screen" id="s2">
+  <div class="content">
+    <div class="eyebrow">03 OCTOBER</div>
+    <h2>Hadeel</h2>
+    <p class="arabic">يوم يستحق أن يُحتفل به.</p>
+    <p style="font:500 22px 'Cormorant Garamond';direction:ltr;color:var(--cream)">Happy Birthday 🤍</p>
+    <button onclick="go(3)">كمّلي...</button>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <div class="content">
+    <div class="eyebrow">A LITTLE QUESTION</div>
+    <p class="arabic" style="font-size:17px;color:var(--cream)">قبل أن أكمل المفاجأة، عندي سؤال بسيط لك.</p>
+    <h2 class="arabic question">كيف تتوقعين سنتك الجديدة؟</h2>
+
+    <div class="choice-grid">
+      <div class="choice" tabindex="0" onclick="choose(this,'وأنا أتمنى أن تكون سنة هادئة فعلًا. 🤍')" onkeydown="keyChoose(event,this,'وأنا أتمنى أن تكون سنة هادئة فعلًا. 🤍')">
+        <strong>🌙 هادئة</strong><span>أحتاج سنة هادئة.</span>
+      </div>
+      <div class="choice" tabindex="0" onclick="choose(this,'وأتمنى أن تفاجئك الحياة بأشياء جميلة. ✨')" onkeydown="keyChoose(event,this,'وأتمنى أن تفاجئك الحياة بأشياء جميلة. ✨')">
+        <strong>✨ مليئة بالمفاجآت</strong><span>أريد شيئًا مختلفًا.</span>
+      </div>
+      <div class="choice" tabindex="0" onclick="choose(this,'وأنا أتمنى أن تكون أجمل من كل ما مضى. 🌸')" onkeydown="keyChoose(event,this,'وأنا أتمنى أن تكون أجمل من كل ما مضى. 🌸')">
+        <strong>🌸 أجمل من السابقة</strong><span>أتمنى أن تكون أفضل.</span>
+      </div>
+      <div class="choice" tabindex="0" onclick="choose(this,'وأحيانًا أجمل الأشياء هي التي لا نخطط لها. 🤍')" onkeydown="keyChoose(event,this,'وأحيانًا أجمل الأشياء هي التي لا نخطط لها. 🤍')">
+        <strong>🤍 لا أعرف</strong><span>دع الأيام تخبرني.</span>
+      </div>
+    </div>
+
+    <p id="response" aria-live="polite"></p>
+    <button id="next3" class="next-hidden" onclick="go(4)">نكمل؟ →</button>
+  </div>
+</section>
+
+<section class="screen" id="s4">
+  <div class="content">
+    <div class="message">
+      <p class="arabic"><strong>هديل... 🤍</strong></p>
+      <p class="arabic">أعرف أن الحياة ما كانت دائمًا لطيفة معك، وأنكِ مررتِ بأشياء كثيرة ما كان سهلًا عليكِ تحملها.</p>
+      <p class="arabic">لكن رغم كل شيء، أنتِ ما زلتِ هنا... تكملين، تدرسين، وتحاولين، وقريبًا جدًا ستصلين لنهاية مرحلة تعبتِ فيها كثيرًا.</p>
+      <p class="arabic">أتمنى أن تكون سنتك الجديدة أهدأ على قلبك، وأكثر لطفًا معك، وأن تجدي فيها أشخاصًا يفهمونكِ ويقدّرونكِ كما أنتِ.</p>
+      <p class="arabic">وأتمنى أن يأتي يوم تنظرين فيه لكل ما مررتِ به، وتبتسمين لأنكِ عرفتِ في النهاية أن كل شيء كان يقودكِ إلى أيام أجمل.</p>
+      <p class="arabic"><strong>كل عام وأنتِ بخير يا هديل. 🤍</strong></p>
+      <p class="arabic">وأتمنى من قلبي أن يكون القادم أجمل... وأن تجدي فيه كل الحب والطمأنينة التي تستحقينها.</p>
+    </div>
+    <button onclick="go(5)">هناك شيء أخير ✦</button>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <div class="content">
+    <div class="eyebrow">ONE LAST THING</div>
+    <p class="arabic" style="font-size:20px;color:var(--cream)">لحظة...</p>
+    <p class="arabic">هناك شيء أريدك أن تتذكريه.</p>
+    <div class="count" id="count">3</div>
+    <div class="count-label">لا تلمسي شيئًا... ✦</div>
+  </div>
+</section>
+
+<section class="screen" id="s6">
+  <div class="content">
+    <div class="eyebrow">FOR YOU</div>
+    <h2>Happy Birthday, Hadeel 🤍</h2>
+    <div class="divider"></div>
+    <p class="arabic final-line">أتمنى أن تكون سنتك القادمة أجمل مما تتوقعين.</p>
+    <p class="arabic">وأن تحمل لكِ أيامًا أهدأ، وأشخاصًا أجمل، وأشياء تستحق أن تتذكريها بابتسامة.</p>
+    <p class="arabic" style="margin-top:32px">من شخص أراد أن يجعل يومك مميزًا ولو بشيء صغير. 🤍</p>
+    <p style="font:500 18px 'Cormorant Garamond';direction:ltr;color:var(--gold);margin-top:26px">Happy Birthday, Hadeel ✦</p>
+    <button onclick="restart()">ابدئي من جديد</button>
+  </div>
+</section>
+
+<script>
+(function(){
+  const screens = [...document.querySelectorAll('.screen')];
+  const dots = [...document.querySelectorAll('.dot')];
+  const response = document.getElementById('response');
+  const next3 = document.getElementById('next3');
+  let countdownTimer = null;
+
+  function makeStars(){
+    const box=document.getElementById('stars');
+    for(let i=0;i<55;i++){
+      const s=document.createElement('i');
+      s.className='star';
+      s.style.left=(Math.random()*100)+'%';
+      s.style.top=(Math.random()*100)+'%';
+      s.style.animationDelay=(Math.random()*3)+'s';
+      box.appendChild(s);
+    }
+  }
+  makeStars();
+
+  window.go=function(n){
+    if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null;}
+    screens.forEach(x=>x.classList.remove('active'));
+    const target=document.getElementById('s'+n);
+    if(target) target.classList.add('active');
+    dots.forEach((d,i)=>d.classList.toggle('active',i===n-1));
+    if(n===5) startCountdown();
+  };
+
+  window.choose=function(el,msg){
+    document.querySelectorAll('.choice').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    response.textContent=msg;
+    next3.classList.remove('next-hidden');
+    next3.classList.add('next-show');
+  };
+
+  window.keyChoose=function(e,el,msg){
+    if(e.key==='Enter' || e.key===' '){
+      e.preventDefault();
+      choose(el,msg);
+    }
+  };
+
+  function startCountdown(){
+    let n=3;
+    const el=document.getElementById('count');
+    el.textContent=n;
+    countdownTimer=setInterval(()=>{
+      n--;
+      if(n<=0){
+        clearInterval(countdownTimer);
+        countdownTimer=null;
+        go(6);
+      }else{
+        el.textContent=n;
+      }
+    },900);
+  }
+
+  window.restart=function(){
+    document.querySelectorAll('.choice').forEach(c=>c.classList.remove('selected'));
+    response.textContent='';
+    next3.classList.add('next-hidden');
+    next3.classList.remove('next-show');
+    go(1);
+  };
+
+  /* زر الصوت: لا يوجد ملف موسيقى خارجي حتى لا ينكسر الموقع.
+     الزر يعطي تأثيرًا بصريًا فقط، ويمكن إضافة MP3 لاحقًا إذا رغبت. */
+  const musicBtn=document.getElementById('musicBtn');
+  musicBtn.addEventListener('click',()=>{
+    musicBtn.classList.toggle('off');
+    musicBtn.textContent=musicBtn.classList.contains('off')?'♪':'♫';
+  });
+})();
+</script>
+</body>
+</html>
