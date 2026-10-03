@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hadeel — A Little Surprise</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Noto+Kufi+Arabic:wght@300;400;500&display=swap');
+:root{--bg:#070b12;--bg2:#0d1420;--gold:#c9ad72;--cream:#f3eee3;--muted:#b5b1aa}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);color:var(--cream);font-family:"Noto Kufi Arabic",sans-serif}
+body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 50% 25%,rgba(201,173,114,.12),transparent 34%),radial-gradient(circle at 20% 80%,rgba(70,100,150,.08),transparent 30%);pointer-events:none}
+.screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:34px 22px;position:relative;overflow:hidden}
+.screen.active{display:flex;animation:fade .9s ease}
+.content{max-width:680px;width:100%;text-align:center;position:relative;z-index:2}
+.eyebrow{font:500 14px "Cormorant Garamond",serif;letter-spacing:4px;color:var(--gold);direction:ltr}
+h1{font:500 clamp(48px,14vw,92px) "Cormorant Garamond",serif;margin:18px 0 8px;direction:ltr}
+h2{font:500 clamp(30px,8vw,54px) "Cormorant Garamond",serif;margin:15px 0;direction:ltr}
+p{font-size:16px;line-height:2.15;color:var(--muted);margin:12px auto;max-width:620px}
+.arabic{font-size:17px;line-height:2.25}
+button{border:1px solid rgba(201,173,114,.55);background:rgba(201,173,114,.07);color:var(--cream);padding:13px 24px;border-radius:999px;font-family:inherit;font-size:14px;cursor:pointer;transition:.3s;margin-top:24px}
+button:hover{background:rgba(201,173,114,.18);transform:translateY(-2px)}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:25px auto;max-width:560px}
+.choice{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.025);border-radius:18px;padding:20px 12px;cursor:pointer;transition:.3s}
+.choice:hover{border-color:rgba(201,173,114,.6);background:rgba(201,173,114,.07);transform:translateY(-3px)}
+.choice strong{display:block;margin-bottom:7px;color:var(--cream)}
+.choice span{font-size:12px;color:#9e9b96}
+.message{border:1px solid rgba(201,173,114,.16);background:rgba(255,255,255,.025);border-radius:26px;padding:28px 22px;text-align:right;box-shadow:0 20px 70px rgba(0,0,0,.22)}
+.message p{max-width:none}
+.reveal{opacity:0;transform:translateY(15px);animation:rise 1s ease forwards}
+.delay1{animation-delay:.5s}.delay2{animation-delay:1.1s}.delay3{animation-delay:1.7s}
+.stars{position:absolute;inset:0;pointer-events:none}
+.star{position:absolute;width:2px;height:2px;background:#d8d2c5;border-radius:50%;opacity:.5;animation:twinkle 3s infinite alternate}
+.music{position:fixed;left:16px;top:16px;z-index:20;width:42px;height:42px;padding:0;margin:0;font-size:16px}
+.small{font-size:12px;color:#817f79}
+.count{font:500 70px "Cormorant Garamond",serif;color:var(--gold);direction:ltr}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{to{opacity:1;transform:none}}
+@keyframes twinkle{to{opacity:.12;transform:scale(.6)}}
+@media(max-width:560px){.choice-grid{grid-template-columns:1fr}.message{padding:22px 18px}.arabic{font-size:15px}}
+</style>
+</head>
+<body>
+<button class="music" id="musicBtn" aria-label="تشغيل الموسيقى">♪</button>
+<audio id="music" loop preload="none">
+  <source src="" type="audio/mpeg">
+</audio>
+
+<section class="screen active" id="s1">
+  <div class="stars" id="stars"></div>
+  <div class="content">
+    <div class="eyebrow reveal">A LITTLE SURPRISE</div>
+    <h1 class="reveal delay1">هديل...</h1>
+    <p class="arabic reveal delay2">اليوم عندي لك شيء صغير.<br>لكن قبل أن أبدأ...</p>
+    <button class="reveal delay3" onclick="go(2)">ابدئي المفاجأة ✦</button>
+  </div>
+</section>
+
+<section class="screen" id="s2">
+  <div class="content">
+    <div class="eyebrow">03 OCTOBER</div>
+    <h2>Hadeel</h2>
+    <p class="arabic">يوم يستحق أن يُحتفل به.</p>
+    <p style="font:500 22px 'Cormorant Garamond';direction:ltr">Happy Birthday 🤍</p>
+    <button onclick="go(3)">كمّلي...</button>
+  </div>
+</section>
+
+<section class="screen" id="s3">
+  <div class="content">
+    <div class="eyebrow">A LITTLE QUESTION</div>
+    <p class="arabic" style="font-size:18px;color:var(--cream)">قبل أن أكمل المفاجأة، عندي سؤال بسيط لك.</p>
+    <h2 class="arabic" style="font-family:'Noto Kufi Arabic';font-size:25px">كيف تتوقعين سنتك الجديدة؟</h2>
+    <div class="choice-grid">
+      <div class="choice" onclick="choose('وأنا أتمنى أن تكون سنة هادئة فعلًا. 🤍')"><strong>🌙 هادئة</strong><span>أحتاج سنة هادئة.</span></div>
+      <div class="choice" onclick="choose('وأتمنى أن تفاجئك الحياة بأشياء جميلة. ✨')"><strong>✨ مليئة بالمفاجآت</strong><span>أريد شيئًا مختلفًا.</span></div>
+      <div class="choice" onclick="choose('وأنا أتمنى أن تكون أجمل من كل ما مضى. 🌸')"><strong>🌸 أجمل من السابقة</strong><span>أتمنى أن تكون أفضل.</span></div>
+      <div class="choice" onclick="choose('وأحيانًا أجمل الأشياء هي التي لا نخطط لها. 🤍')"><strong>🤍 لا أعرف</strong><span>دع الأيام تخبرني.</span></div>
+    </div>
+    <p id="response" class="small"></p>
+    <button id="next3" style="display:none" onclick="go(4)">نكمل؟ →</button>
+  </div>
+</section>
+
+<section class="screen" id="s4">
+  <div class="content">
+    <div class="message">
+      <p class="arabic"><strong>هديل... 🤍</strong></p>
+      <p class="arabic">أعرف أن الحياة ما كانت دائمًا لطيفة معك، وأنكِ مررتِ بأشياء كثيرة ما كان سهلًا عليكِ تحملها.</p>
+      <p class="arabic">لكن رغم كل شيء، أنتِ ما زلتِ هنا... تكملين، تدرسين، وتحاولين، وقريبًا جدًا ستصلين لنهاية مرحلة تعبتِ فيها كثيرًا.</p>
+      <p class="arabic">أتمنى أن تكون سنتك الجديدة أهدأ على قلبك، وأكثر لطفًا معك، وأن تجدي فيها أشخاصًا يفهمونكِ ويقدّرونكِ كما أنتِ.</p>
+      <p class="arabic">وأتمنى أن يأتي يوم تنظرين فيه لكل ما مررتِ به، وتبتسمين لأنكِ عرفتِ في النهاية أن كل شيء كان يقودكِ إلى أيام أجمل.</p>
+      <p class="arabic"><strong>كل عام وأنتِ بخير يا هديل. 🤍</strong></p>
+      <p class="arabic">وأتمنى من قلبي أن يكون القادم أجمل... وأن تجدي فيه كل الحب والطمأنينة التي تستحقينها.</p>
+    </div>
+    <button onclick="go(5)">هناك شيء أخير ✦</button>
+  </div>
+</section>
+
+<section class="screen" id="s5">
+  <div class="content">
+    <div class="eyebrow">ONE LAST THING</div>
+    <p class="arabic" style="font-size:20px;color:var(--cream)">لحظة...</p>
+    <p class="arabic">هناك شيء أريدك أن تتذكريه.</p>
+    <div class="count" id="count">3</div>
+  </div>
+</section>
+
+<section class="screen" id="s6">
+  <div class="content">
+    <div class="eyebrow">FOR YOU</div>
+    <h2>Happy Birthday, Hadeel 🤍</h2>
+    <p class="arabic" style="font-size:19px;color:var(--cream)">أتمنى أن تكون سنتك القادمة أجمل مما تتوقعين.</p>
+    <p class="arabic">وأن تحمل لكِ أيامًا أهدأ، وأشخاصًا أجمل، وأشياء تستحق أن تتذكريها بابتسامة.</p>
+    <p class="arabic" style="margin-top:34px">من شخص أراد أن يجعل يومك مميزًا ولو بشيء صغير. 🤍</p>
+    <p style="font:500 18px 'Cormorant Garamond';direction:ltr;color:var(--gold);margin-top:28px">Happy Birthday, Hadeel ✦</p>
+    <button onclick="go(1)">ابدئي من جديد</button>
+  </div>
+</section>
+
+<script>
+function makeStars(){
+  const box=document.getElementById('stars');
+  for(let i=0;i<55;i++){
+    const s=document.createElement('i'); s.className='star';
+    s.style.left=Math.random()*100+'%'; s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3)+'s'; box.appendChild(s);
+  }
+}
+makeStars();
+function go(n){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===5) countdown();
+}
+function choose(msg){
+  document.getElementById('response').textContent=msg;
+  document.getElementById('next3').style.display='inline-block';
+}
+function countdown(){
+  let n=3; const el=document.getElementById('count'); el.textContent=n;
+  const timer=setInterval(()=>{
+    n--; if(n<=0){clearInterval(timer); go(6)} else el.textContent=n;
+  },900);
+}
+const music=document.getElementById('music'), btn=document.getElementById('musicBtn');
+btn.onclick=async()=>{
+  // Add a music file URL later if desired.
+  if(!music.src){alert('الموسيقى غير مضافة بعد. يمكنك إضافة ملف MP3 لاحقًا.');return;}
+  if(music.paused){await music.play();btn.textContent='Ⅱ'}else{music.pause();btn.textContent='♪'}
+};
+</script>
+</body>
+</html>
